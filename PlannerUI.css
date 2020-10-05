@@ -1,0 +1,40 @@
+.button {
+  border: none;
+  color: white;
+  padding: 16px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  transition-duration: 0.4s;
+  cursor: pointer;
+}
+
+.startButton {
+  background-color: white;
+  color: black;
+  border: 2px solid black;
+  position: absolute;
+  left: 1500px;
+  top: 10px;
+}
+
+.startButton:hover {
+  background-color: gray;
+  color: white;
+}
+
+.resetButton {
+  background-color: white;
+  color: black;
+  border: 2px solid black;
+  position: absolute;
+  left: 1500px;
+  top: 75px;
+}
+
+.resetButton:hover {
+  background-color: gray;
+  color: white;
+}
