@@ -16,7 +16,7 @@ function action_buttons(action_list) {
   action_list.forEach(action => {
     let button = document.createElement('button');
     button.innerHTML = action;
-    button.classList.add('button') // add the button's class here
+    button.classList.add('button')
     button.addEventListener('click', (action) => {
       fetch('', { // your backend URL
         method: 'POST',
@@ -76,6 +76,7 @@ function display_rooms(ctx, rooms_dict) {
     }
   }
 
+  console.log(JSON.parse(JSON.stringify(visited_rooms)))
   let total_height = 900;
   let total_width = 1400;
   let x_list = [];
@@ -85,10 +86,10 @@ function display_rooms(ctx, rooms_dict) {
 
   // Extract x and y coords to get grid dimensions
   for (room_keys in visited_rooms) {
-    if (!(visited_rooms[room_keys][0] in x_list)) {
+    if (!(x_list.includes(visited_rooms[room_keys][0]))) {
       x_list.push(visited_rooms[room_keys][0]);
     }
-    if (!(visited_rooms[room_keys][1] in y_list)) {
+    if (!(y_list.includes(visited_rooms[room_keys][1]))) {
       y_list.push(visited_rooms[room_keys][1]);
     }
   }
@@ -96,16 +97,17 @@ function display_rooms(ctx, rooms_dict) {
   console.log("x_list: " + x_list + "\n")
   console.log("y_list: " + y_list + "\n")
   // Screen width: 1400, height: 900 with 50 pixel margins
+  let room_margin = 50
   let room_width = (total_width - 100) / (x_list.length)
   let room_height = (total_height - 100) / (y_list.length)
 
-  for (element_x in x_list) {
+  for (const element_x of x_list) {
     if (element_x < x_min) {
       x_min = element_x;
     }
   }
 
-  for (element_y in y_list) {
+  for (const element_y of y_list) {
     if (element_y < y_min) {
       y_min = element_y;
     }
@@ -113,8 +115,9 @@ function display_rooms(ctx, rooms_dict) {
 
   // Draw rooms
   for (rooms in visited_rooms) {
-    ctx.strokeRect((visited_rooms[rooms][0] - x_min) * room_width + 50,
-      (visited_rooms[rooms][1] - y_min) * room_height + 50,
+    ctx.strokeRect((visited_rooms[rooms][0] - x_min) * room_width + room_margin,
+      // Account for top down coordinate system
+      (total_height - ((visited_rooms[rooms][1] - y_min) * room_height + room_height)) - room_margin,
       room_width, room_height);
 
   }
@@ -132,7 +135,20 @@ function getData() {
 
   const data = {
     "rooms": {
-      "r1": {}
+      "room1": {
+        "north-of": "room2",
+      },
+      "room2": {
+        "south-of": "room1",
+        "east-of": "room3",
+      },
+      "room3": {
+        "west-of": "room2",
+        "north-of": "room4",
+      },
+      "room4": {
+        "south-of": "room3",
+      },
     },
     "human_actions": [
       "wait",
@@ -152,25 +168,6 @@ function StartScreen(ctx) {
   create_image(ctx, 'https://scx2.b-cdn.net/gfx/news/hires/2019/3-robot.jpg',
     200, 300, 50, 60);
   create_image(ctx, 'human.png', 200, 100, 50, 60);
-  /*display_rooms(ctx, {
-    "rooms": {
-      "room1": {
-        "north-of": "room2",
-      },
-      "room2": {
-        "south-of": "room1",
-        "east-of": "room3",
-      },
-      "room3": {
-        "west-of": "room2",
-        "north-of": "room4",
-      },
-      "room4": {
-        "south-of": "room3",
-      },
-    }
-  }); */
-
 }
 
 function draw() {
